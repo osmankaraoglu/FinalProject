@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
+using Business.Constants;
 using Core.Entities.Concrete;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using System;
 using System.Collections.Generic;
@@ -28,9 +30,14 @@ namespace Business.Concrete
             _userDal.Add(user);
         }
 
-        public User GetByMail(string email)
+        public IDataResult<User> GetByMail(string email)
         {
-            return _userDal.Get(u => u.Email == email);
+            var result = _userDal.Get(u => u.Email == email);
+            if (result == null)
+            {
+                return new ErrorDataResult<User>(Messages.UserNotFound);
+            }
+            return new SuccessDataResult<User>(result, Messages.UserListed);
         }
     }
 }
